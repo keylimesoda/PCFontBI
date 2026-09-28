@@ -35,7 +35,7 @@ def export(path):
         'COPYRIGHT': '"IBM VGA design; derivative by keylimesoda; VileR source. CC BY-SA 4.0."',
     }
     cmap = tt.getBestCmap()
-    lines = ['STARTFONT 2.1', 'COMMENT PCFontBI 0.3.0; see ATTRIBUTION.md and LICENSE',
+    lines = ['STARTFONT 2.1', 'COMMENT PCFontBI 0.4.0; see ATTRIBUTION.md and LICENSE',
              f'FONT -PCFontBI-PCFontBI-{weight}-{slant}-normal--16-120-96-96-c-80-iso10646-1',
              'SIZE 12 96 96', 'FONTBOUNDINGBOX 8 16 0 -2',
              f'STARTPROPERTIES {len(properties)}']
@@ -57,5 +57,5 @@ def export(path):
 
 
 if __name__ == '__main__':
-    for p in sorted((ROOT/'fonts').glob('PCFontBI-*.ttf')):
-        print(export(p))
+    for style in ('Regular','Bold','Italic','BoldItalic'):
+        print(export(ROOT/'fonts'/f'PCFontBI-{style}.ttf'))
