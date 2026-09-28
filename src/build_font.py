@@ -12,6 +12,9 @@ from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from pixel_strikes import strike
 from grid_outlines import row_contours
+from icon_data import ICON_ROWS
+from pixel_strikes import pixels
+from ligatures import add_glyphs, add_features
 
 UPM = 1024
 PX_Y = 64
@@ -23,7 +26,7 @@ ASCENT = TOP
 DESCENT = BOTTOM
 ITALIC_DEGREES = 11.3  # approximate 2-pixel lean over 10 rows; metadata only
 FAMILY = "PCFontBI"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 
 # CP437's 0x01..0x1F and 0x7F are graphic characters on IBM PCs, not Unicode controls.
 CP437_GRAPHICS = {
@@ -53,7 +56,7 @@ ALIASES = {
 
 # Shapes that should remain structurally upright and un-emboldened in every face.
 def structural(cp: int) -> bool:
-    return (0x2500 <= cp <= 0x259F) or (0x2800 <= cp <= 0x28FF) or (0xE0B0 <= cp <= 0xE0B3)
+    return cp in ICON_ROWS or (0x2500 <= cp <= 0x259F) or (0x2800 <= cp <= 0x28FF) or (0xE0B0 <= cp <= 0xE0B3)
 
 
 def cp437_codepoints() -> Dict[int, int]:
@@ -269,6 +272,15 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
         glyf[name] = powerline_glyph(cp)
         cmap[cp] = name
 
+    # Original hand-drawn Nerd-mapped icons remain upright in all faces.
+    for cp, rows in sorted(ICON_ROWS.items()):
+        name = glyph_name(cp)
+        if cp not in cmap:
+            glyph_order.append(name)
+            glyf[name] = pixel_glyph(pixels(rows))
+            cmap[cp] = name
+
+    ligature_mapping = add_glyphs(glyf, glyph_order, pixel_glyph, style.bold)
     fb = FontBuilder(UPM, isTTF=True)
     fb.setupGlyphOrder(glyph_order)
     fb.setupCharacterMap(cmap)
@@ -315,6 +327,7 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
     fb.setupMaxp()
 
     font = fb.font
+    add_features(font, ligature_mapping)
     # Fixed timestamps make repeated builds reproducible in the same toolchain.
     # This is 2026-09-28 00:00 UTC, expressed in TrueType's 1904 epoch.
     font["head"].created = font["head"].modified = 3873398400
