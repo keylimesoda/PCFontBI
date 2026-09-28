@@ -1,124 +1,69 @@
 # IBM VGA 8x16 TUI
 
-A four-face, terminal-oriented family built from the classic IBM VGA 8x16 raster design:
+A four-face terminal family derived from the IBM VGA 8×16 raster. **v0.2** replaces v0.1's outline expansion and continuous shear with discrete bitmap strikes.
 
-- **Regular** — faithful 8x16 pixel geometry at VGA/CRT-corrected aspect
-- **Bold** — a separately generated bold face using fractional-pixel weight, not a 1-pixel smear
-- **Italic** — a real installed italic face with controlled 6.5° designed oblique geometry
-- **Bold Italic** — the same italic design applied to the bold face
+![Four faces, pixel designs and TUI specimen](docs/specimen.png)
 
-The goal is simple: make the old IBM VGA look work in modern TUIs without asking FreeType/fontconfig/the terminal to fake bold and italic at runtime.
+## The four faces
 
-![specimen](docs/specimen.png)
+| Face | Design |
+| --- | --- |
+| Regular | The original 8×16 ROM pixels, scaled to a 53:64 horizontal/vertical pixel aspect. |
+| Bold | A separate 16×16 working bitmap. Each original pixel spans two horizontal design pixels, so stems can gain half a source pixel without closing small counters. |
+| Italic | A separate bitmap with discrete row offsets, plus hand-corrected a, f, g, j, r, { and }. |
+| Bold Italic | Its own strike with separately corrected M, m, W, w, a, f, g, j, r, @, &, { and }. |
 
-## Why this exists
+The base algorithms produce broad CP437 coverage. The listed corrections are individually edited; **the other letters are not claimed to be individually hand-drawn**. See [src/bitmap_styles.py](src/bitmap_styles.py) for the strike grids and pixel edits.
 
-The Oldschool PC Font Pack explicitly documents the problem: these fonts historically had no bold/italic family, and modern renderers usually synthesize them with "smear and shear". That can look especially bad on an 8-pixel-wide raster-derived design.
+Regular keeps the source raster untouched. The other strikes are converted to TrueType outlines **only after** their pixels are chosen. No renderer-side fake styles are required.
 
-This project makes the styles actual font files with consistent family/style metadata and **identical monospace cell metrics across all four faces**.
+### Terminal geometry
 
-## Design choices
+All four faces have the same family name, character map, 424-unit advance, 896-unit ascent, −128-unit descent and zero line gap. Actual italic left bearings are recorded, including up to one source pixel of overhang. Box drawing, blocks, Braille and basic Powerline separators have identical upright outlines in every face. The minus sign, underscore, equals, plus and vertical bar also remain upright in the italic styles so joined rules and code operators do not become broken or crooked.
 
-### Aspect-corrected regular
+The font covers **550 Unicode codepoints**: the CP437 repertoire mapped to Unicode, Block Elements, Braille Patterns, four Powerline separators, and common punctuation aliases. This is **not** yet the complete multilingual AcPlus repertoire. Glyphs outside the current set use terminal/fontconfig fallback.
 
-The source is the authentic IBM VGA `VGA8.F16` 8x16 raster (stored as Base64 text in the repository for portable GitHub/API handling). The outlines use a roughly 5:6 horizontal:vertical source-pixel ratio (`53 x 64` font units), matching the non-square pixel character of 640x400 VGA displayed at 4:3. The fixed advance is 424 units at 1024 UPM.
+The 16×16 grid is a *design grid*, not an embedded bitmap strike at one size: these files are standard outline TTFs. At non-integral output sizes, antialiasing still depends on the renderer.
 
-### Bold that does not eat the counters
+## Install on Omarchy / Linux
 
-A full source-pixel embolden is enormous on an 8-pixel-wide design. The Bold face adds only 8 font units per side (~0.15 source pixel), plus a very small vertical expansion. This makes weight visible under antialiasing without turning `e`, `a`, `8`, `B`, `@`, etc. into bricks.
+Download or clone this repository, then run:
 
-### Italic without wrecking the UI
+~~~sh
+./install.sh
+fc-list | grep 'IBM VGA 8x16 TUI'
+~~~
 
-Italic is generated into its own outlines at build time. Text glyphs use a restrained 6.5° slant around the cell center. Structural glyphs stay upright in **all** faces:
-
-- box drawing
-- block elements and shades
-- Braille
-- Powerline separators
-
-That means italic comments can lean while TUI borders stay straight.
-
-### Modern TUI coverage
-
-The historical CP437 glyphs are present, plus terminal-oriented additions:
-
-- complete Unicode Block Elements (`U+2580..U+259F`)
-- complete Braille Patterns (`U+2800..U+28FF`)
-- basic Powerline separators (`U+E0B0..U+E0B3`)
-- common punctuation aliases (smart quotes, Unicode minus/hyphen variants, NBSP)
-
-Current v0.1 contains **550 Unicode codepoints**. The main missing piece versus `AcPlus` is its broader ~780-glyph multilingual extension; porting those glyphs is on the roadmap.
-
-## Install
-
-```bash
-mkdir -p ~/.local/share/fonts/ibm-vga8x16-tui
-cp fonts/*.ttf ~/.local/share/fonts/ibm-vga8x16-tui/
-fc-cache -f
-```
-
-Verify:
-
-```bash
-fc-match "IBM VGA 8x16 TUI"
-fc-list | grep "IBM VGA 8x16 TUI"
-```
+You can also copy all four files from [fonts](fonts/) into ~/.local/share/fonts/ibm-vga8x16-tui/ and run fc-cache -f.
 
 ### Foot
 
-```ini
+~~~ini
 font=IBM VGA 8x16 TUI:size=12
 font-bold=IBM VGA 8x16 TUI:style=Bold:size=12
 font-italic=IBM VGA 8x16 TUI:style=Italic:size=12
 font-bold-italic=IBM VGA 8x16 TUI:style=Bold Italic:size=12
-```
+~~~
 
-The original raster is 16 pixels high. A size that lands near a 16-pixel rendered height (or an integer multiple) will retain the strongest pixel character.
+Start near a 16-pixel font em (roughly 12 pt at 96 DPI) and compare 16 and 32 physical pixels. A 9 pt em at 96 DPI compresses the 16 vertical source rows into about 12 output pixels. Your compositor scale and Foot DPI settings can change the actual result.
 
-## Build
+## Build and inspect
 
-Requires Python 3 and `fontTools`; Pillow is used only for the specimen image.
+Requires Python 3, fontTools and Pillow:
 
-```bash
+~~~sh
 python -m pip install -r requirements.txt
 make all
-```
+~~~
 
-Outputs:
+This writes the four TTFs to fonts/ and the poster to docs/specimen.png. Run make test for source fidelity, font metadata, equal widths, true side bearings, counter openness and structural-glyph identity checks. GitHub Actions regenerates these binaries and the specimen from source.
 
-```text
-fonts/IBMVGA8x16TUI-Regular.ttf
-fonts/IBMVGA8x16TUI-Bold.ttf
-fonts/IBMVGA8x16TUI-Italic.ttf
-fonts/IBMVGA8x16TUI-BoldItalic.ttf
-```
+## Status and next design passes
 
-Run just the invariant tests:
+v0.2 is a reviewable font-design prototype. The pixel-grid specimen and generated TTFs have been inspected and tested, but actual rendering in your Foot installation on the 42-inch OLED remains a worthwhile final optical check. Priority glyphs to assess there: M W m w 8 B @ % & f g j, adjacent italic punctuation, and long box-drawing runs at your preferred size.
 
-```bash
-make test
-```
+The next repertoire milestone is the missing extended Latin, Greek, Cyrillic and Hebrew glyphs from the larger AcPlus family, with the same metrics and deliberate style review.
 
-The tests verify that all four faces have the same character set, the same 424-unit fixed advance, valid style metadata, and core TUI glyph coverage.
+## Source and license
 
-## Status
-
-**v0.1 is usable, but intentionally conservative.** The four faces are real and correctly style-linked; the Regular face is faithful to the source raster; and structural TUI glyphs are protected from bold/italic distortion.
-
-The next quality pass is manual tuning of the high-risk ASCII glyphs (`a e f g j k r s 8 B M W @ % & { } ( )`) after testing in Foot/Ghostty/Kitty at real terminal sizes, followed by importing the remaining AcPlus multilingual glyph repertoire.
-
-## Source / attribution
-
-The historical raster source is `VGA8.F16` from VileR's `vga-text-mode-fonts` collection:
-
-- <https://github.com/viler-int10h/vga-text-mode-fonts>
-- <https://int10h.org/oldschool-pc-fonts/>
-
-VileR's Oldschool PC Font Pack documents both the aspect-correct (`Ac`) variants and the lack of native bold/italic faces. The pack is distributed under CC BY-SA 4.0.
-
-This derivative family and its build sources are released under **CC BY-SA 4.0**. See `LICENSE` and `ATTRIBUTION.md`.
-
-
-## Automated builds
-
-GitHub Actions rebuilds and tests all four TTF faces plus the specimen image from source on each source change.
+The source raster is VileR's VGA8.F16 dump of the IBM VGA 8×16 character set. The Oldschool PC Font Pack publishes reproductions under CC BY-SA 4.0. This project credits both sources and shares the derivative under **CC BY-SA 4.0**. See [ATTRIBUTION.md](ATTRIBUTION.md) and [LICENSE](LICENSE).

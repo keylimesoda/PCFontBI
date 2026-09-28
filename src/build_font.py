@@ -4,15 +4,13 @@ from __future__ import annotations
 import argparse
 import base64
 import math
-import os
-import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, List
 
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
-from fontTools.ttLib import TTFont
+from bitmap_styles import strike
 
 UPM = 1024
 PX_Y = 64
@@ -23,10 +21,8 @@ BOTTOM = TOP - 16 * PX_Y # -128
 ASCENT = TOP
 DESCENT = BOTTOM
 ITALIC_DEGREES = 6.5
-BOLD_EXPAND_X = 8        # each side: ~0.15 source pixel
-BOLD_EXPAND_Y = 3
 FAMILY = "IBM VGA 8x16 TUI"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 # CP437's 0x01..0x1F and 0x7F are graphic characters on IBM PCs, not Unicode controls.
 CP437_GRAPHICS = {
@@ -89,24 +85,6 @@ def load_rom(path: Path) -> List[List[int]]:
     return glyphs
 
 
-def bitmap_to_runs(rows: List[int]) -> List[Tuple[int, int, int]]:
-    """Return (row, x0, x1_exclusive) black runs from an 8x16 bitmap."""
-    runs = []
-    for y, byte in enumerate(rows):
-        x = 0
-        while x < 8:
-            bit = 7 - x
-            if not (byte & (1 << bit)):
-                x += 1
-                continue
-            start = x
-            x += 1
-            while x < 8 and (byte & (1 << (7 - x))):
-                x += 1
-            runs.append((y, start, x))
-    return runs
-
-
 def _rect(pen: TTGlyphPen, x0: float, y0: float, x1: float, y1: float):
     # Clockwise contour.
     pen.moveTo((round(x0), round(y0)))
@@ -116,41 +94,22 @@ def _rect(pen: TTGlyphPen, x0: float, y0: float, x1: float, y1: float):
     pen.closePath()
 
 
-def bitmap_glyph(rows: List[int], *, bold: bool, italic: bool, keep_structural: bool = False):
+def bitmap_glyph(rows: List[int], style_name: str, character: str | None = None, *, keep_structural: bool = False):
     pen = TTGlyphPen(None)
-    runs = bitmap_to_runs(rows)
-    shear = math.tan(math.radians(ITALIC_DEGREES)) if italic and not keep_structural else 0.0
-
-    # Designed oblique: keep the advance fixed, slant around the vertical middle of the cell.
-    # Unlike synthetic terminal italics this happens at build time and can selectively exclude UI glyphs.
-    y_center = (TOP + BOTTOM) / 2
-
-    for row, x0p, x1p in runs:
+    pixels = strike(rows, "Regular" if keep_structural else style_name, character)
+    for row, xs in enumerate(pixels):
         y1 = TOP - row * PX_Y
         y0 = y1 - PX_Y
-        x0 = x0p * PX_X
-        x1 = x1p * PX_X
-
-        if bold and not keep_structural:
-            x0 -= BOLD_EXPAND_X
-            x1 += BOLD_EXPAND_X
-            y0 -= BOLD_EXPAND_Y
-            y1 += BOLD_EXPAND_Y
-            x0 = max(-BOLD_EXPAND_X, x0)
-            x1 = min(ADVANCE + BOLD_EXPAND_X, x1)
-
-        if shear:
-            # Slant the contour itself rather than applying a renderer-side fake italic.
-            sx0a = shear * (y0 - y_center)
-            sx0b = shear * (y1 - y_center)
-            # Polygon rather than rectangle so verticals become designed diagonals.
-            pen.moveTo((round(x0 + sx0a), round(y0)))
-            pen.lineTo((round(x0 + sx0b), round(y1)))
-            pen.lineTo((round(x1 + sx0b), round(y1)))
-            pen.lineTo((round(x1 + sx0a), round(y0)))
-            pen.closePath()
-        else:
-            _rect(pen, x0, y0, x1, y1)
+        xs = sorted(xs)
+        for start in range(len(xs)):
+            if start and xs[start] == xs[start - 1] + 1:
+                continue
+            end = start
+            while end + 1 < len(xs) and xs[end + 1] == xs[end] + 1:
+                end += 1
+            # Merge adjacent half-source-pixel squares into one row contour.
+            _rect(pen, round(xs[start] * PX_X / 2), y0,
+                  round((xs[end] + 1) * PX_X / 2), y1)
     return pen.glyph()
 
 
@@ -246,10 +205,8 @@ def powerline_glyph(cp: int):
     return pen.glyph()
 
 
-def add_unicode_name(glyph_names: Dict[int, str], cp: int) -> str:
-    name = f"uni{cp:04X}" if cp <= 0xFFFF else f"u{cp:X}"
-    glyph_names[cp] = name
-    return name
+def glyph_name(cp: int) -> str:
+    return f"uni{cp:04X}" if cp <= 0xFFFF else f"u{cp:X}"
 
 
 @dataclass(frozen=True)
@@ -269,14 +226,6 @@ STYLES = [
 
 def build_style(rom: List[List[int]], style: Style, out_path: Path):
     source = cp437_codepoints()
-    # Add our terminal-oriented extensions.
-    cps = set(source)
-    cps.update(ALIASES)
-    cps.update(range(0x2580, 0x25A0))
-    cps.update(range(0x2800, 0x2900))
-    cps.update(range(0xE0B0, 0xE0B4))
-
-    glyph_names: Dict[int, str] = {}
     glyph_order = [".notdef"]
     glyf = {".notdef": empty_glyph()}
     cmap: Dict[int, str] = {}
@@ -284,18 +233,18 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
     # Historical CP437 glyphs first.
     cp_to_name: Dict[int, str] = {}
     for cp in sorted(source):
-        name = add_unicode_name(glyph_names, cp)
+        name = glyph_name(cp)
         cp_to_name[cp] = name
         glyph_order.append(name)
         keep = structural(cp)
-        glyf[name] = bitmap_glyph(rom[source[cp]], bold=style.bold, italic=style.italic, keep_structural=keep)
+        glyf[name] = bitmap_glyph(rom[source[cp]], style.name, chr(cp), keep_structural=keep)
         cmap[cp] = name
 
     # Aliases reuse the exact historical glyph outline.
     for cp, target in sorted(ALIASES.items()):
         if cp in cmap or target not in cp_to_name:
             continue
-        name = add_unicode_name(glyph_names, cp)
+        name = glyph_name(cp)
         glyph_order.append(name)
         glyf[name] = glyf[cp_to_name[target]]
         cmap[cp] = name
@@ -304,21 +253,21 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
     for cp in range(0x2580, 0x25A0):
         if cp in cmap:
             continue
-        name = add_unicode_name(glyph_names, cp)
+        name = glyph_name(cp)
         glyph_order.append(name)
         glyf[name] = block_glyph(cp)
         cmap[cp] = name
 
     # Braille patterns: common in TUIs, charts, spinners and status dashboards.
     for cp in range(0x2800, 0x2900):
-        name = add_unicode_name(glyph_names, cp)
+        name = glyph_name(cp)
         glyph_order.append(name)
         glyf[name] = braille_glyph(cp)
         cmap[cp] = name
 
     # Minimal Powerline separators. Structural glyphs remain identical in all faces.
     for cp in range(0xE0B0, 0xE0B4):
-        name = add_unicode_name(glyph_names, cp)
+        name = glyph_name(cp)
         glyph_order.append(name)
         glyf[name] = powerline_glyph(cp)
         cmap[cp] = name
@@ -331,11 +280,10 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
     # Fixed advance width in every face is the critical TUI invariant.
     metrics = {}
     for g in glyph_order:
-        if g == ".notdef":
-            metrics[g] = (ADVANCE, 0)
-        else:
-            bounds = glyf[g].getCoordinates(glyf)[0] if False else None
-            metrics[g] = (ADVANCE, 0)
+        glyf[g].recalcBounds(glyf)
+        # The advance remains fixed. The side bearing records true ink bounds,
+        # including the occasional one-pixel italic overhang.
+        metrics[g] = (ADVANCE, getattr(glyf[g], "xMin", 0))
     fb.setupHorizontalMetrics(metrics)
     fb.setupHorizontalHeader(ascent=ASCENT, descent=DESCENT, lineGap=0)
 
@@ -348,10 +296,10 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
         "fullName": f"{FAMILY} {style.name}",
         "psName": ps_name,
         "version": f"Version {VERSION}",
-        "copyright": "IBM VGA raster design; TUI derivative by keylimesoda/OpenAI. Source compilation by VileR/int10h.org. CC BY-SA 4.0.",
+        "copyright": "IBM VGA raster design; TUI derivative by keylimesoda. Source compilation by VileR/int10h.org. CC BY-SA 4.0.",
         "manufacturer": "keylimesoda",
         "designer": "IBM VGA source; TUI family derivative",
-        "description": "Aspect-corrected IBM VGA 8x16 terminal family with designed Bold/Italic faces and TUI-safe structural glyphs.",
+        "description": "Aspect-corrected IBM VGA 8x16 terminal family with discrete bitmap style strikes and upright TUI geometry.",
         "licenseDescription": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
         "licenseInfoURL": "https://creativecommons.org/licenses/by-sa/4.0/",
     })
@@ -371,6 +319,10 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
     fb.setupMaxp()
 
     font = fb.font
+    # The four checked-in TTFs should rebuild byte-for-byte on any machine.
+    # This is 2026-09-28 00:00 UTC, expressed in TrueType's 1904 epoch.
+    font["head"].created = font["head"].modified = 3873398400
+    font.recalcTimestamp = False
     font["head"].macStyle = (1 if style.bold else 0) | (2 if style.italic else 0)
     fs = 0
     if style.italic: fs |= 1 << 0
