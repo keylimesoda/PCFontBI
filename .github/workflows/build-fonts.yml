@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - 'fonts/**'
       - 'docs/specimen.png'
+      - 'docs/glyph-atlas.png'
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -24,10 +26,11 @@ jobs:
       - name: Build and test
         run: make all
       - name: Commit generated fonts and specimen
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add fonts/*.ttf docs/specimen.png
+          git add fonts/PCFontBI-*.ttf fonts/PCFontBI-*.bdf docs/specimen.png docs/glyph-atlas.png
           if ! git diff --cached --quiet; then
             git commit -m "build: regenerate font binaries"
             git push

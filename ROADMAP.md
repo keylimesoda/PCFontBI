@@ -1,28 +1,25 @@
 # Roadmap
 
-## v0.2.1 — readability revision (implemented)
+## v0.3.0 — native pixel family (implemented)
 
-- Restore conservative, counter-aware outline weight.
-- Use a continuous 6° oblique and unite the source row rectangles before styling.
-- Remove subpixel notches from the default M/W designs.
-- Keep the first bitmap experiment available through the alternate build option.
-- Compare identical 16-pixel renders, plus native 16/20/24-pixel samples.
-- Check original geometry, spacing, structural outlines and raster weight.
+- Restore square 8×16 pixels and preserve Regular's exact ROM raster.
+- Store explicit ASCII Bold, Italic and Bold Italic bitmap masters.
+- Redraw italic lowercase, refine dense joins, preserve counters and spacing.
+- Ship four matching TTFs and one-bit BDFs under the PCFontBI name.
+- Verify all 550 glyphs per face at 16px and 32px, including structural shapes.
+- Show native text, mixed styles, light/dark backgrounds and a glyph atlas.
 
-## Optical review on the target display
+## Review on the target display
 
-- Inspect in Foot on the target OLED at actual 16/32-pixel em sizes and preferred compositor scale.
-- Review tightly packed code, punctuation and italics beside both neighboring cells.
-- Tune corrected glyphs after seeing grayscale and WRGB-aware terminal rasterization.
-- Compare Ghostty and Kitty if available.
+- Compare the actual 16px raster in Foot on the OLED with WRGB smoothing bypassed for this font.
+- Verify effective physical pixel size at the user's preferred compositor scale.
+- Inspect long reading sessions, dense punctuation and mixed regular/italic runs.
+- Refine letters from actual screenshots; keep both native-size and enlarged evidence.
 
-## v0.3 — AcPlus repertoire parity
+## Further optical work
 
-- Import/recreate the remaining multilingual glyphs from the expanded AcPlus family.
-- Preserve identical coverage and cell metrics in all four faces.
-- Review extended Latin, Greek, Cyrillic and Hebrew styles individually.
+- Refine CP437 accents and non-ASCII styles individually; the current fallback is conservative but not fully curated.
+- Design additional native strikes only where a useful target size is identified. 20px and 24px need their own pixel decisions.
+- Expand to AcPlus multilingual coverage without sacrificing explicit source attribution or pixel review.
 
-## Optional terminal extras
-
-- More Powerline glyphs and heavy Unicode box-drawing forms.
-- Nerd Font patch build, kept separate from the core family.
+The v0.2 half-pixel experiment and v0.2.1 antialiased outline revision remain available in Git history.
