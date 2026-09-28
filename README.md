@@ -1,29 +1,43 @@
 # IBM VGA 8x16 TUI
 
-A four-face terminal family derived from the IBM VGA 8×16 raster. **v0.2** replaces v0.1's outline expansion and continuous shear with discrete bitmap strikes.
+A four-face terminal family derived from the IBM VGA 8×16 raster. **v0.2.1** corrects the overly dark Bold and rough stepped Italic in the first v0.2 experiment.
 
-![Four faces, pixel designs and TUI specimen](docs/specimen.png)
+![Matched-size readability comparison](docs/specimen.png)
 
 ## The four faces
 
-| Face | Design |
+| Face | Default design |
 | --- | --- |
-| Regular | The original 8×16 ROM pixels, scaled to a 53:64 horizontal/vertical pixel aspect. |
-| Bold | A separate 16×16 working bitmap. Each original pixel spans two horizontal design pixels, so stems can gain half a source pixel without closing small counters. |
-| Italic | A separate bitmap with discrete row offsets, plus hand-corrected a, f, g, j, r, { and }. |
-| Bold Italic | Its own strike with separately corrected M, m, W, w, a, f, g, j, r, @, &, { and }. |
+| Regular | Original 8×16 ROM silhouette at a 53:64 horizontal/vertical source-pixel aspect. |
+| Bold | Modest horizontal outline weight, limited by counter space. Dense M/m/W/w/@/&/% receive a smaller increase. |
+| Italic | A continuous 6° oblique, with local adjustments to the j dot and f foot. |
+| Bold Italic | The same counter-aware weight and continuous slant combined. |
 
-The base algorithms produce broad CP437 coverage. The listed corrections are individually edited; **the other letters are not claimed to be individually hand-drawn**. See [src/bitmap_styles.py](src/bitmap_styles.py) for the strike grids and pixel edits.
+The default is deliberately an optically adjusted **oblique**. The original bitmap outline remains visible, but the slant does not add a second staircase along every stem.
 
-Regular keeps the source raster untouched. The other strikes are converted to TrueType outlines **only after** their pixels are chosen. No renderer-side fake styles are required.
+All neighboring row rectangles are united before styling. The resulting contours have no internal row boundaries. Existing small counters retain at least their original width; larger counters retain at least one source pixel. This is a geometric floor, not a promise of a whole illuminated screen pixel at every output size.
 
-### Terminal geometry
+The former 16×16 bitmap experiment remains available for comparison:
 
-All four faces have the same family name, character map, 424-unit advance, 896-unit ascent, −128-unit descent and zero line gap. Actual italic left bearings are recorded, including up to one source pixel of overhang. Box drawing, blocks, Braille and basic Powerline separators have identical upright outlines in every face. The minus sign, underscore, equals, plus and vertical bar also remain upright in the italic styles so joined rules and code operators do not become broken or crooked.
+~~~sh
+python src/build_font.py --design bitmap --out /tmp/vga-bitmap-trial
+~~~
 
-The font covers **550 Unicode codepoints**: the CP437 repertoire mapped to Unicode, Block Elements, Braille Patterns, four Powerline separators, and common punctuation aliases. This is **not** yet the complete multilingual AcPlus repertoire. Glyphs outside the current set use terminal/fontconfig fallback.
+The two designs use the same family/style names; install only the chosen build.
 
-The 16×16 grid is a *design grid*, not an embedded bitmap strike at one size: these files are standard outline TTFs. At non-integral output sizes, antialiasing still depends on the renderer.
+### What the optical revision changes
+
+At a 16-pixel em, the test phrase's total grayscale ink increased about **9.5%** in the revised Bold over Regular, versus about **21%** in the bitmap trial. These are measurements of one test render, not a readability score.
+
+The old half-pixel cuts in M/W have been removed from the default. Such details were too small to survive typical terminal rasterization cleanly. The comparison uses identical text, color, size and rendering, with nearest-neighbor enlargement and native-size samples.
+
+### Terminal geometry and coverage
+
+All four faces share a character map, 424-unit advance, 896-unit ascent, −128-unit descent and zero line gap. Correct side bearings include limited italic overhang. Box drawing, blocks, Braille and basic Powerline separators have identical upright geometry in every face. Minus, underscore, equals, plus and vertical bar stay upright in italic styles.
+
+The font covers **550 Unicode codepoints**: CP437 mapped to Unicode, Block Elements, Braille Patterns, four Powerline separators, and punctuation aliases. Full AcPlus multilingual coverage remains future work.
+
+These are unhinted outline TTFs. Slanted strokes and the aspect-corrected source-pixel width still require antialiasing at most screen sizes. The specimen is a FreeType/Pillow render; it does not simulate WRGB subpixels or prove the result in a particular terminal.
 
 ## Install on Omarchy / Linux
 
@@ -60,9 +74,9 @@ This writes the four TTFs to fonts/ and the poster to docs/specimen.png. Run mak
 
 ## Status and next design passes
 
-v0.2 is a reviewable font-design prototype. The pixel-grid specimen and generated TTFs have been inspected and tested, but actual rendering in your Foot installation on the 42-inch OLED remains a worthwhile final optical check. Priority glyphs to assess there: M W m w 8 B @ % & f g j, adjacent italic punctuation, and long box-drawing runs at your preferred size.
+The four fonts pass checks for source geometry area, preserved counters, fixed advances, side bearings, structural glyph identity and a conservative 16-pixel Bold weight budget. Those checks complement visual inspection; they cannot establish readability.
 
-The next repertoire milestone is the missing extended Latin, Greek, Cyrillic and Hebrew glyphs from the larger AcPlus family, with the same metrics and deliberate style review.
+The remaining optical check is in your Foot installation on the target OLED at your actual scale and font size. Future repertoire work covers the missing extended Latin, Greek, Cyrillic and Hebrew glyphs from AcPlus.
 
 ## Source and license
 

@@ -11,6 +11,7 @@ from typing import Dict, List
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from bitmap_styles import strike
+from optical_outlines import optical_glyph, ANGLE
 
 UPM = 1024
 PX_Y = 64
@@ -20,9 +21,9 @@ TOP = 14 * PX_Y          # 896
 BOTTOM = TOP - 16 * PX_Y # -128
 ASCENT = TOP
 DESCENT = BOTTOM
-ITALIC_DEGREES = 6.5
+ITALIC_DEGREES = ANGLE
 FAMILY = "IBM VGA 8x16 TUI"
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 # CP437's 0x01..0x1F and 0x7F are graphic characters on IBM PCs, not Unicode controls.
 CP437_GRAPHICS = {
@@ -224,7 +225,7 @@ STYLES = [
 ]
 
 
-def build_style(rom: List[List[int]], style: Style, out_path: Path):
+def build_style(rom: List[List[int]], style: Style, out_path: Path, design: str = "optical"):
     source = cp437_codepoints()
     glyph_order = [".notdef"]
     glyf = {".notdef": empty_glyph()}
@@ -237,7 +238,8 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
         cp_to_name[cp] = name
         glyph_order.append(name)
         keep = structural(cp)
-        glyf[name] = bitmap_glyph(rom[source[cp]], style.name, chr(cp), keep_structural=keep)
+        draw_glyph = bitmap_glyph if design == "bitmap" else optical_glyph
+        glyf[name] = draw_glyph(rom[source[cp]], style.name, chr(cp), keep_structural=keep)
         cmap[cp] = name
 
     # Aliases reuse the exact historical glyph outline.
@@ -299,7 +301,9 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path):
         "copyright": "IBM VGA raster design; TUI derivative by keylimesoda. Source compilation by VileR/int10h.org. CC BY-SA 4.0.",
         "manufacturer": "keylimesoda",
         "designer": "IBM VGA source; TUI family derivative",
-        "description": "Aspect-corrected IBM VGA 8x16 terminal family with discrete bitmap style strikes and upright TUI geometry.",
+        "description": ("Experimental bitmap-strike styles; compare with the optical default."
+                        if design == "bitmap" else
+                        "Aspect-corrected IBM VGA 8x16 terminal family with counter-aware weight, continuous oblique and upright TUI geometry."),
         "licenseDescription": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
         "licenseInfoURL": "https://creativecommons.org/licenses/by-sa/4.0/",
     })
@@ -342,13 +346,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", default="upstream/VGA8.F16.b64")
     parser.add_argument("--out", default="fonts")
+    parser.add_argument("--design", choices=("optical", "bitmap"), default="optical",
+                        help="optical is the readable default; bitmap preserves the earlier experiment")
     args = parser.parse_args()
 
     rom = load_rom(Path(args.source))
     out = Path(args.out)
     for style in STYLES:
         filename = f"IBMVGA8x16TUI-{style.name.replace(' ', '')}.ttf"
-        build_style(rom, style, out / filename)
+        build_style(rom, style, out / filename, args.design)
         print(out / filename)
 
 if __name__ == "__main__":

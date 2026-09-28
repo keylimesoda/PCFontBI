@@ -1,14 +1,15 @@
 # Roadmap
 
-## v0.2 — bitmap-strike redesign (implemented)
+## v0.2.1 — readability revision (implemented)
 
-- Replace outline expansion/shear with separately generated bitmap strikes.
-- Keep Regular's original 8×16 geometry; draw style pixels on a 16×16 horizontal-resolution grid.
-- Apply and document individual repairs to difficult ASCII glyphs.
-- Keep TUI structural glyphs and join-sensitive operators upright.
-- Check font metadata, counters, advance widths, side bearings and a 16-pixel specimen.
+- Restore conservative, counter-aware outline weight.
+- Use a continuous 6° oblique and unite the source row rectangles before styling.
+- Remove subpixel notches from the default M/W designs.
+- Keep the first bitmap experiment available through the alternate build option.
+- Compare identical 16-pixel renders, plus native 16/20/24-pixel samples.
+- Check original geometry, spacing, structural outlines and raster weight.
 
-## v0.2 optical review
+## Optical review on the target display
 
 - Inspect in Foot on the target OLED at actual 16/32-pixel em sizes and preferred compositor scale.
 - Review tightly packed code, punctuation and italics beside both neighboring cells.

@@ -1,4 +1,4 @@
-"""Editable 16x16 bitmap strikes for the three new styles.
+"""Archived 16x16 bitmap experiment, available with --design bitmap.
 
 Each original 8x16 source pixel occupies two horizontal strike pixels.  That
 extra resolution allows a half-source-pixel increase in weight. Coordinates
@@ -44,7 +44,7 @@ def _runs(row: frozenset[int]) -> list[tuple[int, int]]:
 def bold_strike(glyph: Bitmap) -> Bitmap:
     """Add whole, selected pixels while preserving at least one-pixel counters.
 
-    This is a starter strike; authored corrections in EDITS below take priority.
+    This is a starter strike; authored CORRECTIONS below take priority.
     Narrow stems grow by one *fine* pixel. Opposite stems may both grow only
     when the gap is sufficiently open; tight counters retain their space.
     """
