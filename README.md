@@ -117,3 +117,8 @@ The historical raster source is `VGA8.F16` from VileR's `vga-text-mode-fonts` co
 VileR's Oldschool PC Font Pack documents both the aspect-correct (`Ac`) variants and the lack of native bold/italic faces. The pack is distributed under CC BY-SA 4.0.
 
 This derivative family and its build sources are released under **CC BY-SA 4.0**. See `LICENSE` and `ATTRIBUTION.md`.
+
+
+## Automated builds
+
+GitHub Actions rebuilds and tests all four TTF faces plus the specimen image from source on each source change.
