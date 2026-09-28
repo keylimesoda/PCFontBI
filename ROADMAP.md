@@ -15,8 +15,9 @@
 - Add a separate four-style pixel companion covering all 10,617 named Nerd Fonts 3.5.1 codepoints.
 - Add 29 contextual programming sequences with unchanged per-character cells and clusters.
 - Install the companion and a scoped Fontconfig fallback rule; retain upstream license notices.
+- Distribute PCFontBI as a standalone font family for any application that can select monospaced fonts; document Foot as one optional integration.
 - Verify actual shaping, all core and companion rasters, style matching and operator-run boundaries.
-- Include an actual shaped-output specimen and explicit Foot/BDF compatibility notes.
+- Include the family specimen, feature comparison and glyph atlas, plus explicit application and BDF compatibility notes.
 
 ## Review on the target display
 

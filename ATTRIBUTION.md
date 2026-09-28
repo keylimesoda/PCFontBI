@@ -20,7 +20,7 @@ The Oldschool PC Font Pack is published under Creative Commons Attribution-Share
 
 ## This derivative
 
-The TUI family conversion, style generation, Unicode terminal additions, tests, and documentation are a derivative work produced for keylimesoda. They are distributed under the same CC BY-SA 4.0 terms.
+The PCFontBI font-family conversion, style generation, Unicode additions, tests, and documentation are a derivative work produced for keylimesoda. They are distributed under the same CC BY-SA 4.0 terms.
 
 ## Nerd Fonts companion (separate license scope)
 

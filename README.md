@@ -1,6 +1,6 @@
 # PCFontBI
 
-**VGA character. Every pixel deliberate.** A four-face 8×16 terminal family: Regular, Bold, Italic and Bold Italic. v0.4.0 adds pixel icons and programming ligatures to the native one-bit grid.
+**VGA character. Every pixel deliberate.** PCFontBI is a standalone, four-face 8×16 monospaced font family: Regular, Bold, Italic and Bold Italic. Use it anywhere you can select an installed font, including terminals, editors and IDEs. v0.4.0 adds pixel icons and programming ligatures to the native one-bit grid.
 
 ![PCFontBI specimen](docs/specimen.png)
 
@@ -22,6 +22,8 @@ The family comes in two forms:
 - **TTF:** square, axis-aligned outlines around the pixel shapes; easy to install in modern terminals.
 - **BDF:** genuine one-bit 16px bitmap strikes; useful for inspection and bitmap-capable applications.
 
+Install the TTFs like any other font and select **PCFontBI** in the application. The core family works on its own; it includes the original VGA repertoire and the curated modern icons. For full Nerd Font private-use coverage, install the separate **PCFontBI Symbols** companion too. On Linux, the installer below adds a Fontconfig fallback rule scoped to PCFontBI; other systems and apps may require you to install or select the companion as a fallback themselves. The companion is optional and is not a prerequisite for using PCFontBI as a font.
+
 The old aspect-compressed and antialiased designs remain in Git history. v0.3 uses the new **PCFontBI** family name and filenames, so it can coexist with the earlier IBM VGA 8x16 TUI family. The cell is now 8px wide at a 16px em, up from 6.625px; this deliberately trades some horizontal density for exact pixels.
 
 ## Icons and programming ligatures
@@ -38,20 +40,24 @@ Stock **Foot does not support programming ligatures across characters**. It disp
 
 BDF contains the core icons but cannot carry OpenType shaping. Use TTF for the ligatures; the full symbol repertoire is in the TTC companion.
 
-## Install
+## Install the fonts
 
-From the repository root:
+On Linux with Fontconfig, install the core family and optional full symbol companion for your user:
 
 ```sh
 ./install.sh
 fc-match PCFontBI
 ```
 
-This installs the four core TTFs, the four-style Symbols TTC and a per-user Fontconfig fallback rule for PCFontBI. It does not change terminal settings or install the BDFs. Built fonts are in [fonts/](fonts/).
+This installs four core TTFs, the four-style Symbols TTC and a per-user Fontconfig fallback rule. It does not change application settings or install the BDFs. Built files are in [fonts/](fonts/). You can also install the four `PCFontBI-*.ttf` files with your operating system's normal font installer; select PCFontBI in your app as you would any other monospaced font. Install `PCFontBI-Symbols.ttc` as well when you need the full Nerd Font repertoire. BDF files are for applications that explicitly support bitmap fonts.
 
-### Foot
+## Use in applications
 
-Use a **16 physical-pixel em**, or an integer multiple such as 32px. Start with this font-only configuration fragment:
+PCFontBI is the font; Foot is one optional place to use it. Any application that can select an installed monospaced font can use the four core faces. The matching symbol companion supplies fallback icons when the application honors Fontconfig or lets you configure fallback fonts. Ligatures require an application with OpenType contextual shaping enabled. See [feature notes](docs/features.md) for coverage and application behavior.
+
+### Foot terminal setup
+
+For Foot, use a **16 physical-pixel em**, or an integer multiple such as 32px. This fragment configures only the font faces; it does not enable programming ligatures, which Foot does not shape across characters:
 
 ```ini
 font=PCFontBI:pixelsize=16:antialias=false:hinting=false
@@ -66,6 +72,8 @@ The per-font `antialias=false` requests whole-pixel rendering; `hinting=false` a
 
 See the [Foot configuration manual](https://manpages.debian.org/trixie/foot/foot.ini.5.en.html) and [Fontconfig properties](https://fontconfig.pages.freedesktop.org/fontconfig/fontconfig-user.html).
 
+Kitty and Ghostty can shape the included programming ligatures when `calt` is enabled. Configuration differs by application; the linked [feature notes](docs/features.md) describe the known support. The font files do not require Foot or any particular terminal.
+
 ### Size limits
 
 The native design is 16px, with clean integer enlargement to 32px, 48px, and so on at an integer pixel origin. A 20px or 24px raster does not map each design pixel to a whole screen pixel: antialiasing can soften it, while monochrome rounding can distort it. A future 20px strike should be designed at 20px. The TTFs deliberately contain no autohinting or size-specific hint programs.
@@ -77,7 +85,11 @@ python -m pip install -r requirements.txt
 make all
 ```
 
-This builds four core TTFs, four core BDFs and the Symbols TTC, runs the tests, and produces the [family specimen](docs/specimen.png), [feature specimen](docs/features.png) and [glyph atlas](docs/glyph-atlas.png). Open images at 100% to avoid viewer resampling.
+This builds four core TTFs, four core BDFs and the Symbols TTC, runs the tests, and produces the family specimen, feature specimen and glyph atlas below. Open images at 100% to avoid viewer resampling.
+
+![PCFontBI glyph atlas](docs/glyph-atlas.png)
+
+The atlas shows the reviewed glyphs across all four faces. The [feature specimen](docs/features.png) compares literal operators with their contextual forms and previews the authored icon set; the [family specimen](docs/specimen.png) shows the four faces in text and terminal-style samples.
 
 The tests check **all 933 core codepoints in every face** through grayscale FreeType/Pillow rendering:
 
