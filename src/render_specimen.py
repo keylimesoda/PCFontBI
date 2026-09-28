@@ -3,6 +3,7 @@
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from export_bdf import raster
+from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parents[1]
 BG, PANEL, INK, MUTED, ACCENT = '#111923', '#192330', '#e8ede7', '#98aabb', '#90d7be'
@@ -24,11 +25,12 @@ def strip(text, style, *, light=False):
 
 
 def specimen():
+    count=len(TTFont(ROOT/'fonts/PCFontBI-Regular.ttf').getBestCmap())
     im=Image.new('RGB',(1280,1420),BG);d=ImageDraw.Draw(im)
     label(d,(48,28),'PCFontBI',54,INK)
     label(d,(49,99),'VGA character. Every pixel deliberate.',25,ACCENT)
-    label(d,(1025,47),'v0.3 / 8 x 16',22,ACCENT)
-    label(d,(49,143),'One-bit designs / square pixels / four faces / 550 codepoints',19)
+    label(d,(1025,47),'v0.4 / 8 x 16',22,ACCENT)
+    label(d,(49,143),f'One-bit designs / square pixels / four faces / {count} core codepoints',19)
     d.line((48,185,1232,185),fill='#344355',width=1)
     samples=('The quick brown fox jumps over the lazy dog.',
              '0OQ 1Il| 8B6G  rn m  vv w  @%&  {}[]()')
@@ -55,7 +57,7 @@ def specimen():
     title='─ PCFontBI / build '
     cells=[
         [('Regular','┌'+title+'─'*(58-len(title))+'┐')],
-        [('Regular','│ '),('Bold','PASS'),('Regular','  4 faces   550 glyphs   16px / 32px                  │')],
+        [('Regular','│ '),('Bold','PASS'),('Regular',f'  4 faces   {count} glyphs   16px / 32px                  │')],
         [('Regular','│ '),('Italic','Every pixel has a job.'),('Regular','                                    │')],
         [('Regular','│                                                          │')],
         [('Regular','│ '),('Bold','if'),('Regular',' (ready) { '),('Bold Italic','return'),('Regular',' glyphs[0]; }                       │')],

@@ -1,0 +1,895 @@
+{
+  "folder": {
+    "rows": "000000007088fe82828282fe00000000",
+    "mappings": {
+      "cod-folder": "EA83",
+      "custom-folder": "E5FF",
+      "fa-folder": "F07B",
+      "fa-folder_o": "F114",
+      "md-folder": "F024B",
+      "md-folder_outline": "F0256",
+      "oct-file_directory": "F413"
+    }
+  },
+  "folder-open": {
+    "rows": "000000007088fe80fc8488f000000000",
+    "mappings": {
+      "cod-folder_opened": "EAF7",
+      "custom-folder_open": "E5FE",
+      "fa-folder_open": "F07C",
+      "fa-folder_open_o": "F115",
+      "md-folder_open": "F0770",
+      "md-folder_open_outline": "F0DCF",
+      "oct-file_directory_open_fill": "F4D4"
+    }
+  },
+  "file": {
+    "rows": "0000f08884fe828282828282fe000000",
+    "mappings": {
+      "cod-file": "EA7B",
+      "fa-file": "F15B",
+      "fa-file_o": "F016",
+      "md-file": "F0214",
+      "md-file_outline": "F0224",
+      "oct-file": "F4A5",
+      "seti-default": "E64E",
+      "custom-default": "E612"
+    }
+  },
+  "file-text": {
+    "rows": "0000f08884fe82ba82ba82bafe000000",
+    "mappings": {
+      "cod-file_text": "EC5E",
+      "fa-file_text": "F15C",
+      "fa-file_text_o": "F0F6",
+      "md-file_document": "F0219",
+      "md-file_document_outline": "F09EE"
+    }
+  },
+  "file-code": {
+    "rows": "0000f08884fe82a2c6a28282fe000000",
+    "mappings": {
+      "cod-file_code": "EAE9",
+      "md-file_code": "F022E",
+      "md-file_code_outline": "F102B",
+      "oct-file_code": "F40D",
+      "fa-file_code": "F1C9",
+      "fa-file_code_o": "F1C9"
+    }
+  },
+  "file-image": {
+    "rows": "0000f08884fe82a2828a96e2fe000000",
+    "mappings": {
+      "md-file_image": "F021F",
+      "md-file_image_outline": "F0EB0",
+      "oct-file_media": "F40F",
+      "fa-file_image": "F1C5",
+      "fa-file_image_o": "F1C5"
+    }
+  },
+  "archive": {
+    "rows": "000000fe82fe9292ba9292fe00000000",
+    "mappings": {
+      "cod-file_zip": "EAEF",
+      "fa-file_archive_o": "F1C6",
+      "md-zip_box": "F05C4",
+      "oct-file_zip": "F410",
+      "seti-zip": "E6AA"
+    }
+  },
+  "branch": {
+    "rows": "0000382838101c161410382838000000",
+    "mappings": {
+      "pl-branch": "E0A0",
+      "cod-git_branch": "EC6F",
+      "dev-git_branch": "E725",
+      "fa-code_fork": "F126",
+      "md-source_branch": "F062C",
+      "oct-git_branch": "F418"
+    }
+  },
+  "commit": {
+    "rows": "00000000003828ee2838000000000000",
+    "mappings": {
+      "cod-git_commit": "EAFC",
+      "dev-git_commit": "E729",
+      "md-source_commit": "F0718",
+      "oct-git_commit": "F417"
+    }
+  },
+  "merge": {
+    "rows": "000044ee444428101038283800000000",
+    "mappings": {
+      "cod-git_merge": "EAFE",
+      "dev-git_merge": "E727",
+      "md-source_merge": "F062D",
+      "oct-git_merge": "F419"
+    }
+  },
+  "pull-request": {
+    "rows": "000044ee44545c5444ee440000000000",
+    "mappings": {
+      "cod-git_pull_request": "EA64",
+      "dev-git_pull_request": "E726",
+      "oct-git_pull_request": "F407"
+    }
+  },
+  "git": {
+    "rows": "00000010385cee5c3810000000000000",
+    "mappings": {
+      "dev-git": "E702",
+      "fa-git": "F1D3",
+      "md-git": "F02A2",
+      "seti-git": "E65D"
+    }
+  },
+  "github": {
+    "rows": "00000044eefebafe7c38386c00000000",
+    "mappings": {
+      "dev-github_badge": "E709",
+      "fa-github": "F09B",
+      "fa-github_alt": "F113",
+      "md-github": "F02A4",
+      "oct-mark_github": "F408",
+      "cod-github": "EA84",
+      "seti-github": "E65B"
+    }
+  },
+  "terminal": {
+    "rows": "000000fe82c2a292a2ce82fe00000000",
+    "mappings": {
+      "cod-terminal": "EA85",
+      "dev-terminal": "E795",
+      "fa-terminal": "F120",
+      "oct-terminal": "F489",
+      "md-console": "F018D",
+      "seti-shell": "E691"
+    }
+  },
+  "prompt": {
+    "rows": "00000000004020102040000000000000",
+    "mappings": {
+      "cod-chevron_right": "EAB6",
+      "fa-angle_right": "F105",
+      "oct-chevron_right": "F460",
+      "md-chevron_right": "F0142"
+    }
+  },
+  "check": {
+    "rows": "000000000002068cd870200000000000",
+    "mappings": {
+      "cod-check": "EAB2",
+      "fa-check": "F00C",
+      "md-check": "F012C",
+      "oct-check": "F42E"
+    }
+  },
+  "close": {
+    "rows": "00000000824428102844820000000000",
+    "mappings": {
+      "cod-close": "EA76",
+      "md-close": "F0156",
+      "oct-x": "F467",
+      "fa-close": "F00D",
+      "fa-times": "F00D"
+    }
+  },
+  "warning": {
+    "rows": "0000001028285454928292fe00000000",
+    "mappings": {
+      "cod-warning": "EA6C",
+      "md-alert": "F0026",
+      "oct-alert": "F421",
+      "fa-warning": "F071",
+      "fa-exclamation_triangle": "F071"
+    }
+  },
+  "error": {
+    "rows": "00000038449292928292443800000000",
+    "mappings": {
+      "cod-error": "EA87",
+      "fa-times_circle": "F057",
+      "md-alert_circle": "F0028",
+      "oct-stop": "F46E",
+      "seti-error": "E654"
+    }
+  },
+  "info": {
+    "rows": "00000038449282929292443800000000",
+    "mappings": {
+      "cod-info": "EA74",
+      "fa-info_circle": "F05A",
+      "md-information": "F02FC",
+      "oct-info": "F449",
+      "seti-info": "E66A"
+    }
+  },
+  "question": {
+    "rows": "00000038448204181000100000000000",
+    "mappings": {
+      "cod-question": "EB32",
+      "fa-question": "F128",
+      "fa-question_circle": "F059",
+      "md-help": "F02D6",
+      "oct-question": "F420"
+    }
+  },
+  "clock": {
+    "rows": "000000384492929a8244380000000000",
+    "mappings": {
+      "md-clock_outline": "F0150",
+      "oct-clock": "F43A",
+      "fa-clock": "F017",
+      "fa-clock_o": "F017"
+    }
+  },
+  "lock": {
+    "rows": "000000384444fe82929282fe00000000",
+    "mappings": {
+      "cod-lock": "EA75",
+      "cod-lock_small": "EBE7",
+      "fa-lock": "F023",
+      "md-lock": "F033E",
+      "md-lock_outline": "F0341",
+      "oct-lock": "F456",
+      "pl-readonly": "E0A2",
+      "pl-hostname": "E0A2"
+    }
+  },
+  "unlock": {
+    "rows": "000000384440fe82929282fe00000000",
+    "mappings": {
+      "cod-unlock": "EB74",
+      "fa-unlock": "F09C",
+      "fa-lock_open": "F2FC",
+      "md-lock_open": "F033F",
+      "md-lock_open_outline": "F0340",
+      "oct-unlock": "F52A"
+    }
+  },
+  "key": {
+    "rows": "0000006090906030180c0a0000000000",
+    "mappings": {
+      "cod-key": "EB11",
+      "fa-key": "F084",
+      "md-key": "F0306",
+      "oct-key": "F43D"
+    }
+  },
+  "search": {
+    "rows": "0000007088888870180c060000000000",
+    "mappings": {
+      "cod-search": "EA6D",
+      "fa-search": "F002",
+      "md-magnify": "F0349",
+      "oct-search": "F422",
+      "seti-search": "E68F"
+    }
+  },
+  "gear": {
+    "rows": "0000001054fe44d644fe541000000000",
+    "mappings": {
+      "cod-settings_gear": "EB51",
+      "md-cog": "F0493",
+      "oct-gear": "F423",
+      "seti-settings": "E690",
+      "fa-gear": "F013",
+      "fa-cog": "F013"
+    }
+  },
+  "settings": {
+    "rows": "0000004444ee4444445c444400000000",
+    "mappings": {
+      "cod-settings": "EB52",
+      "fa-sliders": "F1DE",
+      "md-tune": "F062E"
+    }
+  },
+  "home": {
+    "rows": "00000010386cc682baaaaaee00000000",
+    "mappings": {
+      "cod-home": "EB06",
+      "md-home": "F02DC",
+      "oct-home": "F46D",
+      "fa-home": "F015",
+      "fa-house": "F015"
+    }
+  },
+  "user": {
+    "rows": "0000003844443800384482fe00000000",
+    "mappings": {
+      "cod-account": "EB99",
+      "fa-user": "F007",
+      "md-account": "F0004",
+      "oct-person": "F415"
+    }
+  },
+  "users": {
+    "rows": "0000006c92926c006c9292fe00000000",
+    "mappings": {
+      "cod-organization": "EA7E",
+      "fa-users": "F0C0",
+      "md-account_group": "F0849",
+      "oct-people": "F4FD"
+    }
+  },
+  "cloud": {
+    "rows": "00000000003844c282827c0000000000",
+    "mappings": {
+      "cod-cloud": "EBAA",
+      "fa-cloud": "F0C2",
+      "md-cloud": "F015F",
+      "oct-cloud": "F4AC"
+    }
+  },
+  "download": {
+    "rows": "0000001010105438100082fe00000000",
+    "mappings": {
+      "cod-cloud_download": "EAC2",
+      "fa-download": "F019",
+      "md-download": "F01DA",
+      "oct-download": "F409"
+    }
+  },
+  "upload": {
+    "rows": "0000001038541010100082fe00000000",
+    "mappings": {
+      "cod-cloud_upload": "EAC3",
+      "fa-upload": "F093",
+      "md-upload": "F0552",
+      "oct-upload": "F40A"
+    }
+  },
+  "refresh": {
+    "rows": "0000003c42828e00e282847800000000",
+    "mappings": {
+      "cod-refresh": "EB37",
+      "fa-refresh": "F021",
+      "md-refresh": "F0450",
+      "oct-sync": "F46A"
+    }
+  },
+  "link": {
+    "rows": "000000000c1224582448300000000000",
+    "mappings": {
+      "cod-link": "EB15",
+      "fa-link": "F0C1",
+      "md-link": "F0337",
+      "oct-link": "F44C"
+    }
+  },
+  "external": {
+    "rows": "0000001e060a92a2c28282fe00000000",
+    "mappings": {
+      "cod-link_external": "EB14",
+      "fa-external_link": "F08E",
+      "md-open_in_new": "F03CC",
+      "oct-link_external": "F465"
+    }
+  },
+  "heart": {
+    "rows": "000000006cfefefe7c38100000000000",
+    "mappings": {
+      "cod-heart": "EB05",
+      "fa-heart": "F004",
+      "md-heart": "F02D1",
+      "oct-heart": "2665"
+    }
+  },
+  "star": {
+    "rows": "0000001010fe7c386c44000000000000",
+    "mappings": {
+      "cod-star_full": "EB59",
+      "fa-star": "F005",
+      "md-star": "F04CE",
+      "oct-star": "F41E"
+    }
+  },
+  "cpu": {
+    "rows": "000000547c44d654d6447c5400000000",
+    "mappings": {
+      "oct-cpu": "F4BC",
+      "fa-microchip": "F2DB",
+      "md-chip": "F061A"
+    }
+  },
+  "memory": {
+    "rows": "00000000fe82aaaa82fe540000000000",
+    "mappings": {
+      "fa-memory": "EFC5",
+      "md-memory": "F035B"
+    }
+  },
+  "database": {
+    "rows": "0000007c82fe827c827c827c00000000",
+    "mappings": {
+      "cod-database": "EACE",
+      "dev-database": "E706",
+      "fa-database": "F1C0",
+      "md-database": "F01BC",
+      "oct-database": "F472"
+    }
+  },
+  "disk": {
+    "rows": "000000fe8282828282fe8afe00000000",
+    "mappings": {
+      "cod-save": "EB4B",
+      "md-content_save": "F0193",
+      "oct-device_desktop": "F4A9",
+      "fa-floppy_o": "F0C7",
+      "fa-save": "F0C7"
+    }
+  },
+  "server": {
+    "rows": "000000fe8afe00fe8afe00fe8afe0000",
+    "mappings": {
+      "cod-server": "EB50",
+      "fa-server": "F233",
+      "md-server": "F048B",
+      "oct-server": "F473"
+    }
+  },
+  "network": {
+    "rows": "000000382838107c44eeaaee00000000",
+    "mappings": {
+      "cod-globe": "EB01",
+      "fa-sitemap": "F0E8",
+      "md-lan": "F0317",
+      "oct-workflow": "F52E"
+    }
+  },
+  "wifi": {
+    "rows": "000000007c8238441028001000000000",
+    "mappings": {
+      "fa-wifi": "F1EB",
+      "md-wifi": "F05A9",
+      "cod-radio_tower": "EB34",
+      "oct-broadcast": "F43C"
+    }
+  },
+  "ethernet": {
+    "rows": "000000fe929282baaa38101000000000",
+    "mappings": {
+      "fa-network_wired": "EF09",
+      "md-ethernet": "F0200"
+    }
+  },
+  "power": {
+    "rows": "00000010105492928244380000000000",
+    "mappings": {
+      "fa-power_off": "F011",
+      "md-power": "F0425",
+      "iec-power": "23FB",
+      "cod-debug_disconnect": "EAD0"
+    }
+  },
+  "play": {
+    "rows": "00000000406070787060400000000000",
+    "mappings": {
+      "cod-play": "EB2C",
+      "fa-play": "F04B",
+      "md-play": "F040A",
+      "oct-play": "F500"
+    }
+  },
+  "pause": {
+    "rows": "000000006c6c6c6c6c6c6c0000000000",
+    "mappings": {
+      "cod-debug_pause": "EAD1",
+      "fa-pause": "F04C",
+      "md-pause": "F03E4"
+    }
+  },
+  "stop": {
+    "rows": "000000007c7c7c7c7c7c7c0000000000",
+    "mappings": {
+      "cod-debug_stop": "EAD7",
+      "fa-stop": "F04D",
+      "md-stop": "F04DB"
+    }
+  },
+  "volume": {
+    "rows": "00000000081a3aeaea3a1a0800000000",
+    "mappings": {
+      "fa-volume_up": "F028",
+      "md-volume_high": "F057E",
+      "cod-unmute": "EB75"
+    }
+  },
+  "muted": {
+    "rows": "00000000081838eae43a180800000000",
+    "mappings": {
+      "fa-volume_off": "F026",
+      "md-volume_off": "F0581",
+      "cod-mute": "EB24"
+    }
+  },
+  "bug": {
+    "rows": "0000004438547cd67cd67c2800000000",
+    "mappings": {
+      "cod-bug": "EAAF",
+      "fa-bug": "F188",
+      "md-bug": "F00E4",
+      "oct-bug": "F46F"
+    }
+  },
+  "package": {
+    "rows": "000000386cd6aa9282c66c3800000000",
+    "mappings": {
+      "cod-package": "EB29",
+      "fa-cube": "F1B2",
+      "md-package_variant": "F03D6",
+      "oct-package": "F487"
+    }
+  },
+  "lightbulb": {
+    "rows": "00000038448282442828383800000000",
+    "mappings": {
+      "cod-lightbulb": "EA61",
+      "fa-lightbulb_o": "F0EB",
+      "md-lightbulb_outline": "F0336",
+      "oct-light_bulb": "F400"
+    }
+  },
+  "trash": {
+    "rows": "00000038fe007c545454547c00000000",
+    "mappings": {
+      "cod-trash": "EA81",
+      "fa-trash": "F1F8",
+      "fa-trash_o": "F014",
+      "md-trash_can_outline": "F0A7A",
+      "oct-trash": "F48E"
+    }
+  },
+  "edit": {
+    "rows": "000000060e1c3870e0c0000000000000",
+    "mappings": {
+      "cod-edit": "EA73",
+      "fa-pencil": "F040",
+      "md-pencil": "F03EB",
+      "oct-pencil": "F448"
+    }
+  },
+  "image": {
+    "rows": "000000fe82a2828a96a2c2fe00000000",
+    "mappings": {
+      "cod-file_media": "EAEA",
+      "fa-image": "F03E",
+      "md-image": "F02E9",
+      "oct-image": "F4E5"
+    }
+  },
+  "mail": {
+    "rows": "00000000fec6aa928282fe0000000000",
+    "mappings": {
+      "cod-mail": "EB1C",
+      "fa-envelope": "F0E0",
+      "md-email": "F01EE",
+      "oct-mail": "F42F"
+    }
+  },
+  "calendar": {
+    "rows": "00000044fe44fe82aa82aafe00000000",
+    "mappings": {
+      "cod-calendar": "EAB0",
+      "fa-calendar": "F073",
+      "md-calendar": "F00ED",
+      "oct-calendar": "F455"
+    }
+  },
+  "tag": {
+    "rows": "00000000f0c8a4824428100000000000",
+    "mappings": {
+      "cod-tag": "EA66",
+      "fa-tag": "F02B",
+      "md-tag": "F04F9",
+      "oct-tag": "F412"
+    }
+  },
+  "bookmark": {
+    "rows": "0000007c44444444546c440000000000",
+    "mappings": {
+      "cod-bookmark": "EAA5",
+      "fa-bookmark": "F02E",
+      "md-bookmark": "F00C0",
+      "oct-bookmark": "F461"
+    }
+  },
+  "filter": {
+    "rows": "00000000fe7c38101010300000000000",
+    "mappings": {
+      "cod-filter": "EAF1",
+      "fa-filter": "F0B0",
+      "md-filter": "F0232",
+      "oct-filter": "F4D7"
+    }
+  },
+  "eye": {
+    "rows": "0000000000386cd66c38000000000000",
+    "mappings": {
+      "cod-eye": "EA70",
+      "fa-eye": "F06E",
+      "md-eye": "F0208",
+      "oct-eye": "F441"
+    }
+  },
+  "menu": {
+    "rows": "00000000fe0000fe0000fe0000000000",
+    "mappings": {
+      "cod-menu": "EB94",
+      "fa-bars": "F0C9",
+      "md-menu": "F035C",
+      "oct-three_bars": "F44E"
+    }
+  },
+  "ellipsis": {
+    "rows": "00000000000000009292000000000000",
+    "mappings": {
+      "cod-ellipsis": "EA7C",
+      "fa-ellipsis_h": "F141",
+      "md-dots_horizontal": "F01D8",
+      "oct-kebab_horizontal": "F4EB"
+    }
+  },
+  "battery-empty": {
+    "rows": "00000000007c444646447c0000000000",
+    "mappings": {
+      "md-battery_outline": "F008E",
+      "fa-battery_empty": "F244",
+      "fa-battery_0": "F244"
+    }
+  },
+  "battery-low": {
+    "rows": "00000000007c646666647c0000000000",
+    "mappings": {
+      "md-battery_20": "F007B",
+      "fa-battery_quarter": "F243",
+      "fa-battery_1": "F243"
+    }
+  },
+  "battery-half": {
+    "rows": "00000000007c747676747c0000000000",
+    "mappings": {
+      "md-battery_50": "F007E",
+      "fa-battery_half": "F242",
+      "fa-battery_2": "F242"
+    }
+  },
+  "battery-full": {
+    "rows": "00000000007c7c7e7e7c7c0000000000",
+    "mappings": {
+      "md-battery": "F0079",
+      "fa-battery_full": "F240",
+      "fa-battery_4": "F240",
+      "fa-battery": "F240"
+    }
+  },
+  "charging": {
+    "rows": "0000000818307c183020000000000000",
+    "mappings": {
+      "fa-bolt": "F0E7",
+      "md-flash": "F0241",
+      "md-battery_charging": "F0084",
+      "oct-zap": "26A1"
+    }
+  },
+  "linux": {
+    "rows": "00003844547c386cc6c66cee00000000",
+    "mappings": {
+      "dev-linux": "E712",
+      "fa-linux": "F17C",
+      "md-linux": "F033D",
+      "linux-tux": "F31A",
+      "cod-terminal_linux": "EBC6"
+    }
+  },
+  "apple": {
+    "rows": "00000c18006cfef8f8fe7c6c00000000",
+    "mappings": {
+      "dev-apple": "E711",
+      "fa-apple": "F179",
+      "md-apple": "F0035",
+      "linux-apple": "F302"
+    }
+  },
+  "windows": {
+    "rows": "00000000eeaaee00eeaaee0000000000",
+    "mappings": {
+      "dev-windows": "E70F",
+      "fa-windows": "F17A",
+      "md-microsoft_windows": "F05B3"
+    }
+  },
+  "docker": {
+    "rows": "00000018187878fefe7c380000000000",
+    "mappings": {
+      "dev-docker": "E7B0",
+      "fa-docker": "F21F",
+      "md-docker": "F0868",
+      "seti-docker": "E650"
+    }
+  },
+  "python": {
+    "rows": "0000003c343cf8823e78587800000000",
+    "mappings": {
+      "dev-python": "E73C",
+      "fa-python": "ED1B",
+      "seti-python": "E606",
+      "cod-python": "EC39"
+    }
+  },
+  "java": {
+    "rows": "0000100810007c46467c00fe00000000",
+    "mappings": {
+      "dev-java": "E738",
+      "fa-java": "EDAF",
+      "seti-java": "E66D"
+    }
+  },
+  "arch": {
+    "rows": "00001038386c6cc6c682000000000000",
+    "mappings": {
+      "linux-archlinux": "F303",
+      "linux-archlabs": "F31E"
+    }
+  },
+  "javascript": {
+    "rows": "000000fe00262824a24c00fe00000000",
+    "mappings": {
+      "dev-javascript_alt": "E74E",
+      "seti-javascript": "E60C"
+    }
+  },
+  "typescript": {
+    "rows": "000000fe00e64844424c00fe00000000",
+    "mappings": {
+      "dev-typescript": "E8CA",
+      "seti-typescript": "E628"
+    }
+  },
+  "rust": {
+    "rows": "000000fe00302830282800fe00000000",
+    "mappings": {
+      "dev-rust": "E7A8",
+      "seti-rust": "E68B"
+    }
+  },
+  "go": {
+    "rows": "000000fe00648aaaaa6400fe00000000",
+    "mappings": {
+      "dev-go": "E724",
+      "seti-go": "E627",
+      "seti-go2": "E65E",
+      "md-language_go": "F07D3"
+    }
+  },
+  "c": {
+    "rows": "000000fe00182020201800fe00000000",
+    "mappings": {
+      "custom-c": "E61E",
+      "dev-c": "E771",
+      "seti-c": "E649",
+      "md-language_c": "F0671"
+    }
+  },
+  "cpp": {
+    "rows": "000000fe0060848e846000fe00000000",
+    "mappings": {
+      "custom-cpp": "E61D",
+      "dev-cplusplus": "E7A3",
+      "seti-cpp": "E646",
+      "md-language_cpp": "F0672"
+    }
+  },
+  "csharp": {
+    "rows": "000000fe006a8e8a8e6a00fe00000000",
+    "mappings": {
+      "dev-csharp": "E7B2",
+      "seti-c_sharp": "E648",
+      "md-language_csharp": "F031B"
+    }
+  },
+  "html": {
+    "rows": "000000fe00282838282800fe00000000",
+    "mappings": {
+      "dev-html5": "E736",
+      "seti-html": "E60E",
+      "md-language_html5": "F031D"
+    }
+  },
+  "css": {
+    "rows": "000000fe00668884826c00fe00000000",
+    "mappings": {
+      "dev-css3": "E749",
+      "custom-css": "E6B8",
+      "seti-css": "E614",
+      "md-language_css3": "F031C"
+    }
+  },
+  "json": {
+    "rows": "00000000284444824444280000000000",
+    "mappings": {
+      "cod-json": "EB0F",
+      "seti-json": "E60B",
+      "md-code_json": "F0626"
+    }
+  },
+  "markdown": {
+    "rows": "000000fe00283838282800fe00000000",
+    "mappings": {
+      "dev-markdown": "E73E",
+      "seti-markdown": "E609",
+      "md-language_markdown": "F0354",
+      "oct-markdown": "F48A"
+    }
+  },
+  "react": {
+    "rows": "000000284492aa924428000000000000",
+    "mappings": {
+      "dev-react": "E7BA",
+      "seti-react": "E625"
+    }
+  },
+  "ruby": {
+    "rows": "000000fe00ccaaccaaac00fe00000000",
+    "mappings": {
+      "dev-ruby": "E739",
+      "seti-ruby": "E605"
+    }
+  },
+  "php": {
+    "rows": "000000fe00302830202000fe00000000",
+    "mappings": {
+      "dev-php": "E73D",
+      "seti-php": "E608",
+      "md-language_php": "F031F"
+    }
+  },
+  "lua": {
+    "rows": "000000fe00202020203800fe00000000",
+    "mappings": {
+      "dev-lua": "E826",
+      "seti-lua": "E620",
+      "md-language_lua": "F08B1"
+    }
+  },
+  "swift": {
+    "rows": "000000fe006a8a4e2eca00fe00000000",
+    "mappings": {
+      "dev-swift": "E755",
+      "seti-swift": "E699",
+      "md-language_swift": "F06E5"
+    }
+  },
+  "kotlin": {
+    "rows": "000000fe00282830282800fe00000000",
+    "mappings": {
+      "dev-kotlin": "E81B",
+      "seti-kotlin": "E634",
+      "md-language_kotlin": "F1219"
+    }
+  },
+  "nix": {
+    "rows": "000000fe00aaeae4eaaa00fe00000000",
+    "mappings": {
+      "linux-nixos": "F313",
+      "dev-nixos": "E843"
+    }
+  },
+  "ubuntu": {
+    "rows": "000000fe00282828283800fe00000000",
+    "mappings": {
+      "linux-ubuntu": "F31B",
+      "dev-ubuntu": "E73A",
+      "fa-ubuntu": "EF72"
+    }
+  },
+  "debian": {
+    "rows": "000000fe00302828283000fe00000000",
+    "mappings": {
+      "linux-debian": "F306",
+      "dev-debian": "E77D",
+      "cod-terminal_debian": "EBC5"
+    }
+  }
+}

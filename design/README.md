@@ -18,7 +18,7 @@ Preserve what works in the original: recognizable silhouettes, economical cells 
 
 There are 95 printable ASCII masters per styled face. The initial weight and staircase candidates were derived from the ROM; lowercase Italic and selected crowded joins were then edited explicitly. The build reads the frozen masters. It does not regenerate them from the styling rules.
 
-The remaining CP437 repertoire uses the conservative rules in `src/pixel_strikes.py`. Their visual refinement, especially accented letters, is a separate remaining task. Do not describe this version as 550 individually hand-drawn glyphs.
+The remaining CP437 repertoire uses the conservative rules in `src/pixel_strikes.py`. Their visual refinement, especially accented letters, is a separate remaining task. Do not describe the entire repertoire as individually hand-drawn.
 
 `src/grid_outlines.py` traces the union of the pixels into TTF contours. `src/export_bdf.py` exports the verified 16px raster and refuses to threshold gray pixels. The two output formats must reproduce the same bits.
 
@@ -34,3 +34,11 @@ The remaining CP437 repertoire uses the conservative rules in `src/pixel_strikes
 | Native bitmap export | None | Four one-bit BDFs |
 
 We borrow the discipline of period bitmap work, not a claim of historical reconstruction. X11 Courier was a useful reference for restrained stroke weight and intentional diagonals. Its glyphs were not copied. This is a new VGA derivative for modern use.
+
+## v0.4: icons and operators
+
+`icons.json` holds 99 authored one-bit designs and their 384 upstream Nerd Font mappings. Familiar silhouettes win over logo detail; some language symbols become compact monograms. Existing VGA codepoints retain priority. The symbols remain upright in Bold and Italic, just like box drawing.
+
+`src/ligatures.py` draws 29 operator sequences over a shared multi-cell canvas, then cuts each drawing into ordinary eight-pixel glyphs. Contextual substitutions preserve one glyph and cluster per character. Longest sequences run first; operator-run guards prevent partial substitutions inside unsupported longer combinations. Operators remain upright, with intentional whole-pixel Bold variants. This is a visual convenience, not a change to program text or token semantics.
+
+The full Nerd Fonts repertoire lives in a separate companion. Its frozen one-bit masters are automatically fitted from the pinned upstream font, not individually redesigned. Four style records share identical outlines so fallback does not need synthetic bold or italic. This separates source licensing and lets the original core icons take precedence. Full coverage does not imply equal optical quality: intricate logos are candidates for future manual replacement.

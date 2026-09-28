@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
 from build_font import cp437_codepoints, load_rom, structural
 from pixel_strikes import DESIGNS
+from icon_data import ICON_ROWS
 from export_bdf import raster
 
 STYLES = ('Regular', 'Bold', 'Italic', 'Bold Italic')
@@ -48,7 +49,7 @@ def main():
         tt = TTFont(path); fonts[style] = tt
         assert tt['name'].getDebugName(1) == 'PCFontBI'
         assert tt['name'].getDebugName(2) == style
-        assert tt['name'].getDebugName(5) == 'Version 0.3.0'
+        assert tt['name'].getDebugName(5) == 'Version 0.4.0'
         assert tt['head'].unitsPerEm == 1024
         assert tt['post'].isFixedPitch
         assert tt['hhea'].ascent == 896 and tt['hhea'].descent == -128
@@ -57,7 +58,8 @@ def main():
         assert bool(tt['head'].macStyle & 1) == ('Bold' in style)
         assert bool(tt['head'].macStyle & 2) == ('Italic' in style)
         cmap = tt.getBestCmap(); cmaps.append(set(cmap))
-        assert len(cmap) == 550
+        assert len(cmap) == 933
+        assert set(ICON_ROWS) <= set(cmap)
         assert tt['OS/2'].sxHeight == tt['glyf'][cmap[ord('x')]].yMax
         assert tt['OS/2'].sCapHeight == tt['glyf'][cmap[ord('H')]].yMax
         ft16 = ImageFont.truetype(str(path),16)
@@ -82,6 +84,8 @@ def main():
             assert raster(ft32,chr(cp),2).tobytes() == native.resize((16,32),Image.Resampling.NEAREST).tobytes(), (style,hex(cp),'32px changed design')
             if cp in cp437 and (style == 'Regular' or structural(cp)):
                 expected = rom[cp437[cp]]
+            elif cp in ICON_ROWS:
+                expected = ICON_ROWS[cp]
             elif 32 <= cp < 127:
                 expected = bytes.fromhex(DESIGNS[style][f'{cp:04X}'])
             else:
@@ -107,7 +111,7 @@ def main():
             assert all(masks[style][cp].getpixel((7,y)) == 0 for y in range(16)), (style,chr(cp),'lost gutter')
     assert all(c == cmaps[0] for c in cmaps)
     for cp in cmaps[0]:
-        if structural(cp):
+        if structural(cp) or cp in ICON_ROWS:
             assert len({masks[s][cp].tobytes() for s in STYLES}) == 1, hex(cp)
     # Bold must not fill the enclosed spaces in the common round forms.
     for roman,bold in (('Regular','Bold'),('Italic','Bold Italic')):
@@ -119,7 +123,7 @@ def main():
         assert 1.05 < ratio < 1.30, (bold,ratio)
         print(f'{bold}: {100*(ratio-1):.1f}% more ink in native sample')
     for f in fonts.values(): f.close()
-    print('OK: four faces, 550 codepoints each; exact 16px rasters, exact 2x at 32px, no gray pixels; BDF parity')
+    print(f'OK: four faces, {len(cmaps[0])} codepoints each; exact 16px rasters, exact 2x at 32px, no gray pixels; BDF parity')
 
 
 if __name__ == '__main__':

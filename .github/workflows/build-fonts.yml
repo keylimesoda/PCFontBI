@@ -7,6 +7,7 @@ on:
       - 'fonts/**'
       - 'docs/specimen.png'
       - 'docs/glyph-atlas.png'
+      - 'docs/features.png'
   pull_request:
   workflow_dispatch:
 
@@ -30,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add fonts/PCFontBI-*.ttf fonts/PCFontBI-*.bdf docs/specimen.png docs/glyph-atlas.png
+          git add fonts/PCFontBI-*.ttf fonts/PCFontBI-*.bdf fonts/PCFontBI-*.ttc docs/specimen.png docs/glyph-atlas.png docs/features.png
           if ! git diff --cached --quiet; then
             git commit -m "build: regenerate font binaries"
             git push
