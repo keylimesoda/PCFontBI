@@ -1,6 +1,8 @@
 # PCFontBI
 
-**VGA character. Every pixel deliberate.** PCFontBI is a standalone, four-face 8×16 monospaced font family: Regular, Bold, Italic and Bold Italic. Use it anywhere you can select an installed font, including terminals, editors and IDEs. v0.4.0 adds pixel icons and programming ligatures to the native one-bit grid.
+**VGA character. Every pixel deliberate.** PCFontBI extends VileR’s (int10h.org) excellent preservation of classic PC fonts. We keep the IBM VGA 8×16 raster from [`VGA8.F16` in VileR’s font archive](https://github.com/viler-int10h/vga-text-mode-fonts/blob/master/FONTS/PC-IBM/VGA8.F16) pixel-for-pixel in Regular, then add Bold and Italic faces, Nerd Font glyph coverage and programming ligatures. See VileR’s [Ultimate Oldschool PC Font Pack](https://int10h.org/oldschool-pc-fonts/) for the wider preservation project.
+
+PCFontBI is a standalone, four-face 8×16 monospaced font family: Regular, Bold, Italic and Bold Italic. Use it anywhere you can select an installed font, including terminals, editors and IDEs. v0.4.0 adds pixel icons and programming ligatures to the native one-bit grid.
 
 ![PCFontBI specimen](docs/specimen.png)
 
