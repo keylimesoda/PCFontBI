@@ -1,83 +1,81 @@
-# IBM VGA 8x16 TUI
+# PCFontBI
 
-A four-face terminal family derived from the IBM VGA 8×16 raster. **v0.2.1** corrects the overly dark Bold and rough stepped Italic in the first v0.2 experiment.
+**VGA character. Every pixel deliberate.** A four-face 8×16 terminal family: Regular, Bold, Italic and Bold Italic. v0.3.0 restores a true one-bit pixel grid, with no horizontal compression or fractional stroke weight.
 
-![Matched-size readability comparison](docs/specimen.png)
+![PCFontBI specimen](docs/specimen.png)
 
-## The four faces
+## The design
 
-| Face | Default design |
+| Face | Construction |
 | --- | --- |
-| Regular | Original 8×16 ROM silhouette at a 53:64 horizontal/vertical source-pixel aspect. |
-| Bold | Modest horizontal outline weight, limited by counter space. Dense M/m/W/w/@/&/% receive a smaller increase. |
-| Italic | A continuous 6° oblique, with local adjustments to the j dot and f foot. |
-| Bold Italic | The same counter-aware weight and continuous slant combined. |
+| Regular | Original IBM VGA 8×16 ROM pixels, unchanged. |
+| Bold | Selected whole-pixel weight additions, protected counters, opened M/W joins. |
+| Italic | Explicit ASCII bitmap masters, a two-pixel staircase, redrawn lowercase and a single-storey a. |
+| Bold Italic | Weight applied to the italic bitmap, with separate M/W corrections. |
 
-The default is deliberately an optically adjusted **oblique**. The original bitmap outline remains visible, but the slant does not add a second staircase along every stem.
+The 95 printable ASCII characters in each styled face have editable masters in [design/strikes.json](design/strikes.json). They were seeded from the ROM, then curated; the italic lowercase was redrawn. Other CP437 characters use conservative fallback styling and are not individually authored. Regular remains the fidelity reference.
 
-All neighboring row rectangles are united before styling. The resulting contours have no internal row boundaries. Existing small counters retain at least their original width; larger counters retain at least one source pixel. This is a geometric floor, not a promise of a whole illuminated screen pixel at every output size.
+Every face has the same **8×16 cell** and **550 Unicode codepoints**: CP437, complete Block Elements and Braille ranges, four Powerline separators and punctuation aliases. Box drawing, blocks, Braille and Powerline stay identical across styles. Letters and digits keep a one-pixel right gutter. The original full-width VGA symbols retain their width.
 
-The former 16×16 bitmap experiment remains available for comparison:
+The family comes in two forms:
 
-~~~sh
-python src/build_font.py --design bitmap --out /tmp/vga-bitmap-trial
-~~~
+- **TTF:** square, axis-aligned outlines around the pixel shapes; easy to install in modern terminals.
+- **BDF:** genuine one-bit 16px bitmap strikes; useful for inspection and bitmap-capable applications.
 
-The two designs use the same family/style names; install only the chosen build.
+The old aspect-compressed and antialiased designs remain in Git history. v0.3 uses the new **PCFontBI** family name and filenames, so it can coexist with the earlier IBM VGA 8x16 TUI family. The cell is now 8px wide at a 16px em, up from 6.625px; this deliberately trades some horizontal density for exact pixels.
 
-### What the optical revision changes
+## Install
 
-At a 16-pixel em, the test phrase's total grayscale ink increased about **9.5%** in the revised Bold over Regular, versus about **21%** in the bitmap trial. These are measurements of one test render, not a readability score.
+From the repository root:
 
-The old half-pixel cuts in M/W have been removed from the default. Such details were too small to survive typical terminal rasterization cleanly. The comparison uses identical text, color, size and rendering, with nearest-neighbor enlargement and native-size samples.
-
-### Terminal geometry and coverage
-
-All four faces share a character map, 424-unit advance, 896-unit ascent, −128-unit descent and zero line gap. Correct side bearings include limited italic overhang. Box drawing, blocks, Braille and basic Powerline separators have identical upright geometry in every face. Minus, underscore, equals, plus and vertical bar stay upright in italic styles.
-
-The font covers **550 Unicode codepoints**: CP437 mapped to Unicode, Block Elements, Braille Patterns, four Powerline separators, and punctuation aliases. Full AcPlus multilingual coverage remains future work.
-
-These are unhinted outline TTFs. Slanted strokes and the aspect-corrected source-pixel width still require antialiasing at most screen sizes. The specimen is a FreeType/Pillow render; it does not simulate WRGB subpixels or prove the result in a particular terminal.
-
-## Install on Omarchy / Linux
-
-Download or clone this repository, then run:
-
-~~~sh
+```sh
 ./install.sh
-fc-list | grep 'IBM VGA 8x16 TUI'
-~~~
+fc-match PCFontBI
+```
 
-You can also copy all four files from [fonts](fonts/) into ~/.local/share/fonts/ibm-vga8x16-tui/ and run fc-cache -f.
+This installs the four TTFs in the per-user font directory. It does not change terminal settings or install the BDFs. Built fonts are in [fonts/](fonts/).
 
 ### Foot
 
-~~~ini
-font=IBM VGA 8x16 TUI:size=12
-font-bold=IBM VGA 8x16 TUI:style=Bold:size=12
-font-italic=IBM VGA 8x16 TUI:style=Italic:size=12
-font-bold-italic=IBM VGA 8x16 TUI:style=Bold Italic:size=12
-~~~
+Use a **16 physical-pixel em**, or an integer multiple such as 32px. Start with this font-only configuration fragment:
 
-Start near a 16-pixel font em (roughly 12 pt at 96 DPI) and compare 16 and 32 physical pixels. A 9 pt em at 96 DPI compresses the 16 vertical source rows into about 12 output pixels. Your compositor scale and Foot DPI settings can change the actual result.
+```ini
+font=PCFontBI:pixelsize=16:antialias=false:hinting=false
+font-bold=PCFontBI:style=Bold:pixelsize=16:antialias=false:hinting=false
+font-italic=PCFontBI:style=Italic:pixelsize=16:antialias=false:hinting=false
+font-bold-italic=PCFontBI:style=Bold Italic:pixelsize=16:antialias=false:hinting=false
+```
 
-## Build and inspect
+`pixelsize` avoids point-to-pixel DPI conversion. Foot's DPI/scaling settings and compositor scaling still matter: the final raster should land on the physical display grid. With `dpi-aware=yes`, Foot documents that an explicit `pixelsize` is used as-is; other scaling paths can multiply it. Inspect a screenshot at 100% rather than assuming the requested size is the final size.
 
-Requires Python 3, fontTools and Pillow:
+The per-font `antialias=false` requests whole-pixel rendering; `hinting=false` avoids moving the authored grid. This also avoids deliberately applying RGB/WRGB smoothing to these glyphs in renderers that honor the setting. These are settings to test in your Foot build, not a claim that its custom WRGB path has been verified.
 
-~~~sh
+See the [Foot configuration manual](https://manpages.debian.org/trixie/foot/foot.ini.5.en.html) and [Fontconfig properties](https://fontconfig.pages.freedesktop.org/fontconfig/fontconfig-user.html).
+
+### Size limits
+
+The native design is 16px, with clean integer enlargement to 32px, 48px, and so on at an integer pixel origin. A 20px or 24px raster does not map each design pixel to a whole screen pixel: antialiasing can soften it, while monochrome rounding can distort it. A future 20px strike should be designed at 20px. The TTFs deliberately contain no autohinting or size-specific hint programs.
+
+## Build and review
+
+```sh
 python -m pip install -r requirements.txt
 make all
-~~~
+```
 
-This writes the four TTFs to fonts/ and the poster to docs/specimen.png. Run make test for source fidelity, font metadata, equal widths, true side bearings, counter openness and structural-glyph identity checks. GitHub Actions regenerates these binaries and the specimen from source.
+This builds four TTFs and four BDFs, runs the tests, and produces the [specimen](docs/specimen.png) and [glyph atlas](docs/glyph-atlas.png). Open images at 100% to avoid viewer resampling.
 
-## Status and next design passes
+The tests check **all 550 glyphs in every face** through grayscale FreeType/Pillow rendering:
 
-The four fonts pass checks for source geometry area, preserved counters, fixed advances, side bearings, structural glyph identity and a conservative 16-pixel Bold weight budget. Those checks complement visual inspection; they cannot establish readability.
+- No intermediate gray pixels at 16px, and exact doubled rasters at 32px.
+- Pixel-for-pixel ROM fidelity in Regular and exact ASCII-master reproduction in the styles.
+- TTF/BDF raster parity, cell bounds, grid alignment, spacing and style metadata.
+- Structural glyph identity, representative counter preservation and distinct confusable characters.
 
-The remaining optical check is in your Foot installation on the target OLED at your actual scale and font size. Future repertoire work covers the missing extended Latin, Greek, Cyrillic and Hebrew glyphs from AcPlus.
+In the checked native-size phrase, Bold adds about 15.6% ink over Regular; Bold Italic adds about 18.6% over Italic. These are weight measurements, not readability scores. The specimens were visually inspected on dark and light backgrounds; the target OLED and custom Foot renderer still need local review.
+
+[Design notes](design/README.md) explain the choices. [ROADMAP.md](ROADMAP.md) tracks remaining work.
 
 ## Source and license
 
-The source raster is VileR's VGA8.F16 dump of the IBM VGA 8×16 character set. The Oldschool PC Font Pack publishes reproductions under CC BY-SA 4.0. This project credits both sources and shares the derivative under **CC BY-SA 4.0**. See [ATTRIBUTION.md](ATTRIBUTION.md) and [LICENSE](LICENSE).
+The base raster is VileR's VGA8.F16 dump of IBM's VGA 8×16 character set. Credit and the existing **CC BY-SA 4.0** terms are preserved in [ATTRIBUTION.md](ATTRIBUTION.md) and [LICENSE](LICENSE). PCFontBI is an independent derivative, not an IBM product.

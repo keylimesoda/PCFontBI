@@ -10,20 +10,20 @@ from typing import Dict, List
 
 from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
-from bitmap_styles import strike
-from optical_outlines import optical_glyph, ANGLE
+from pixel_strikes import strike
+from grid_outlines import row_contours
 
 UPM = 1024
 PX_Y = 64
-PX_X = 53               # 8 * 53 = 424; ~5:6 pixel aspect, close to 640x400 on 4:3
+PX_X = 64               # one square screen pixel at a 16-pixel em
 ADVANCE = PX_X * 8
 TOP = 14 * PX_Y          # 896
 BOTTOM = TOP - 16 * PX_Y # -128
 ASCENT = TOP
 DESCENT = BOTTOM
-ITALIC_DEGREES = ANGLE
-FAMILY = "IBM VGA 8x16 TUI"
-VERSION = "0.2.1"
+ITALIC_DEGREES = 11.3  # approximate 2-pixel lean over 10 rows; metadata only
+FAMILY = "PCFontBI"
+VERSION = "0.3.0"
 
 # CP437's 0x01..0x1F and 0x7F are graphic characters on IBM PCs, not Unicode controls.
 CP437_GRAPHICS = {
@@ -95,22 +95,23 @@ def _rect(pen: TTGlyphPen, x0: float, y0: float, x1: float, y1: float):
     pen.closePath()
 
 
-def bitmap_glyph(rows: List[int], style_name: str, character: str | None = None, *, keep_structural: bool = False):
+def pixel_glyph(pixels):
+    """Package a one-bit strike as outlines on the exact 64-unit grid."""
+    runs = []
+    for row in pixels:
+        spans = []
+        for x in sorted(row):
+            if spans and spans[-1][1] == x * PX_X:
+                spans[-1] = (spans[-1][0], (x + 1) * PX_X)
+            else:
+                spans.append((x * PX_X, (x + 1) * PX_X))
+        runs.append(spans)
     pen = TTGlyphPen(None)
-    pixels = strike(rows, "Regular" if keep_structural else style_name, character)
-    for row, xs in enumerate(pixels):
-        y1 = TOP - row * PX_Y
-        y0 = y1 - PX_Y
-        xs = sorted(xs)
-        for start in range(len(xs)):
-            if start and xs[start] == xs[start - 1] + 1:
-                continue
-            end = start
-            while end + 1 < len(xs) and xs[end + 1] == xs[end] + 1:
-                end += 1
-            # Merge adjacent half-source-pixel squares into one row contour.
-            _rect(pen, round(xs[start] * PX_X / 2), y0,
-                  round((xs[end] + 1) * PX_X / 2), y1)
+    for contour in row_contours(runs):
+        pen.moveTo(contour[0])
+        for p in contour[1:]:
+            pen.lineTo(p)
+        pen.closePath()
     return pen.glyph()
 
 
@@ -120,11 +121,11 @@ def empty_glyph():
 
 def block_glyph(cp: int):
     """Programmatic Unicode Block Elements U+2580..U+259F for TUI coverage."""
-    pen = TTGlyphPen(None)
+    rows = [set() for _ in range(16)]
     # Coordinates are fractions of the cell width/height.
     def rect_frac(x0, y0, x1, y1):
-        _rect(pen, ADVANCE * x0, BOTTOM + (TOP - BOTTOM) * y0,
-              ADVANCE * x1, BOTTOM + (TOP - BOTTOM) * y1)
+        for y in range(round(16*(1-y1)), round(16*(1-y0))):
+            rows[y].update(range(round(8*x0), round(8*x1)))
 
     if cp == 0x2580: rect_frac(0, .5, 1, 1)      # upper half
     elif cp == 0x2581: rect_frac(0, 0, 1, 1/8)
@@ -149,8 +150,7 @@ def block_glyph(cp: int):
         for ry in range(8):
             for rx in range(4):
                 if ((rx + ry * 2) % 4) < density:
-                    _rect(pen, rx * ADVANCE/4, BOTTOM + ry * (TOP-BOTTOM)/8,
-                          (rx+1)*ADVANCE/4, BOTTOM + (ry+1)*(TOP-BOTTOM)/8)
+                    rect_frac(rx/4, ry/8, (rx+1)/4, (ry+1)/8)
     elif cp == 0x2594: rect_frac(0, 7/8, 1, 1)
     elif cp == 0x2595: rect_frac(7/8, 0, 1, 1)
     elif cp == 0x2596: rect_frac(0, 0, .5, .5)
@@ -169,7 +169,7 @@ def block_glyph(cp: int):
         rect_frac(.5, .5, 1, 1); rect_frac(0, 0, .5, .5)
     elif cp == 0x259F:
         rect_frac(.5, 0, 1, 1); rect_frac(0, 0, .5, .5)
-    return pen.glyph()
+    return pixel_glyph(rows)
 
 
 def braille_glyph(cp: int):
@@ -191,19 +191,15 @@ def braille_glyph(cp: int):
 
 
 def powerline_glyph(cp: int):
-    pen = TTGlyphPen(None)
-    mid = (TOP + BOTTOM) / 2
-    if cp == 0xE0B0:  # solid right triangle
-        pen.moveTo((0, BOTTOM)); pen.lineTo((ADVANCE, mid)); pen.lineTo((0, TOP)); pen.closePath()
-    elif cp == 0xE0B2:  # solid left triangle
-        pen.moveTo((ADVANCE, BOTTOM)); pen.lineTo((0, mid)); pen.lineTo((ADVANCE, TOP)); pen.closePath()
-    elif cp == 0xE0B1:  # thin right chevron
-        w = max(18, PX_X//2)
-        pen.moveTo((0, BOTTOM)); pen.lineTo((w, BOTTOM)); pen.lineTo((ADVANCE, mid)); pen.lineTo((w, TOP)); pen.lineTo((0, TOP)); pen.lineTo((ADVANCE-w, mid)); pen.closePath()
-    elif cp == 0xE0B3:  # thin left chevron
-        w = max(18, PX_X//2)
-        pen.moveTo((ADVANCE, BOTTOM)); pen.lineTo((ADVANCE-w, BOTTOM)); pen.lineTo((0, mid)); pen.lineTo((ADVANCE-w, TOP)); pen.lineTo((ADVANCE, TOP)); pen.lineTo((w, mid)); pen.closePath()
-    return pen.glyph()
+    # The diagonal is drawn in whole pixels just like the text styles.
+    rows = []
+    for y in range(16):
+        width = min(y + 1, 16 - y)
+        row = set(range(width)) if cp in (0xE0B0, 0xE0B2) else {width - 1}
+        if cp in (0xE0B2, 0xE0B3):
+            row = {7 - x for x in row}
+        rows.append(row)
+    return pixel_glyph(rows)
 
 
 def glyph_name(cp: int) -> str:
@@ -225,7 +221,7 @@ STYLES = [
 ]
 
 
-def build_style(rom: List[List[int]], style: Style, out_path: Path, design: str = "optical"):
+def build_style(rom: List[List[int]], style: Style, out_path: Path):
     source = cp437_codepoints()
     glyph_order = [".notdef"]
     glyf = {".notdef": empty_glyph()}
@@ -238,8 +234,7 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path, design: str 
         cp_to_name[cp] = name
         glyph_order.append(name)
         keep = structural(cp)
-        draw_glyph = bitmap_glyph if design == "bitmap" else optical_glyph
-        glyf[name] = draw_glyph(rom[source[cp]], style.name, chr(cp), keep_structural=keep)
+        glyf[name] = pixel_glyph(strike(rom[source[cp]], style.name, chr(cp), keep_structural=keep))
         cmap[cp] = name
 
     # Aliases reuse the exact historical glyph outline.
@@ -283,14 +278,13 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path, design: str 
     metrics = {}
     for g in glyph_order:
         glyf[g].recalcBounds(glyf)
-        # The advance remains fixed. The side bearing records true ink bounds,
-        # including the occasional one-pixel italic overhang.
+        # The advance remains fixed; the side bearing records true ink bounds.
         metrics[g] = (ADVANCE, getattr(glyf[g], "xMin", 0))
     fb.setupHorizontalMetrics(metrics)
     fb.setupHorizontalHeader(ascent=ASCENT, descent=DESCENT, lineGap=0)
 
     ps_style = style.name.replace(" ", "")
-    ps_name = f"IBMVGA8x16TUI-{ps_style}"
+    ps_name = f"PCFontBI-{ps_style}"
     fb.setupNameTable({
         "familyName": FAMILY,
         "styleName": style.name,
@@ -301,9 +295,7 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path, design: str 
         "copyright": "IBM VGA raster design; TUI derivative by keylimesoda. Source compilation by VileR/int10h.org. CC BY-SA 4.0.",
         "manufacturer": "keylimesoda",
         "designer": "IBM VGA source; TUI family derivative",
-        "description": ("Experimental bitmap-strike styles; compare with the optical default."
-                        if design == "bitmap" else
-                        "Aspect-corrected IBM VGA 8x16 terminal family with counter-aware weight, continuous oblique and upright TUI geometry."),
+        "description": "Pixel-native IBM VGA 8x16 derivative. One-bit strikes, square pixels, curated ASCII styles and upright terminal geometry. Designed for 16px and integer multiples.",
         "licenseDescription": "Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
         "licenseInfoURL": "https://creativecommons.org/licenses/by-sa/4.0/",
     })
@@ -315,15 +307,15 @@ def build_style(rom: List[List[int]], style: Style, out_path: Path, design: str 
         usWinDescent=-DESCENT,
         usWeightClass=style.weight,
         usWidthClass=5,
-        sxHeight=7 * PX_Y,
-        sCapHeight=11 * PX_Y,
+        sxHeight=9 * PX_Y,   # top of x, measured from the y=0 baseline
+        sCapHeight=12 * PX_Y,
     )
     fb.setupPost(italicAngle=(-ITALIC_DEGREES if style.italic else 0), isFixedPitch=1,
-                 underlinePosition=-90, underlineThickness=45)
+                 underlinePosition=-64, underlineThickness=64)
     fb.setupMaxp()
 
     font = fb.font
-    # The four checked-in TTFs should rebuild byte-for-byte on any machine.
+    # Fixed timestamps make repeated builds reproducible in the same toolchain.
     # This is 2026-09-28 00:00 UTC, expressed in TrueType's 1904 epoch.
     font["head"].created = font["head"].modified = 3873398400
     font.recalcTimestamp = False
@@ -346,15 +338,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", default="upstream/VGA8.F16.b64")
     parser.add_argument("--out", default="fonts")
-    parser.add_argument("--design", choices=("optical", "bitmap"), default="optical",
-                        help="optical is the readable default; bitmap preserves the earlier experiment")
     args = parser.parse_args()
 
     rom = load_rom(Path(args.source))
     out = Path(args.out)
     for style in STYLES:
-        filename = f"IBMVGA8x16TUI-{style.name.replace(' ', '')}.ttf"
-        build_style(rom, style, out / filename, args.design)
+        filename = f"PCFontBI-{style.name.replace(' ', '')}.ttf"
+        build_style(rom, style, out / filename)
         print(out / filename)
 
 if __name__ == "__main__":
